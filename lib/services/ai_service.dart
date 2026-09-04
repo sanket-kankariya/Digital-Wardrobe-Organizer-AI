@@ -22,8 +22,13 @@ class AiService {
   static const _storage = FlutterSecureStorage();
   static const _apiKeyStorageKey = 'gemini_api_key';
 
-  static const String _primaryModel = 'gemini-3.8-flash';
-  static const String _fallbackModel = 'gemini-2.5-flash';
+  // Primary model and fallback chain in order of availability and stability
+  static const List<String> _models = [
+    'gemini-3.6-flash',
+    'gemini-1.5-flash',
+    'gemini-3.8-flash',
+  ];
+
 
   static Future<void> saveApiKey(String apiKey) async {
     await _storage.write(key: _apiKeyStorageKey, value: apiKey.trim());
@@ -43,29 +48,21 @@ class AiService {
   }
 
   static Future<bool> validateApiKey(String apiKey) async {
-    try {
-      final model = GenerativeModel(
-        model: _primaryModel,
-        apiKey: apiKey.trim(),
-      );
-      final response = await model.generateContent([
-        Content.text('Hello'),
-      ]);
-      return response.text != null;
-    } catch (_) {
+    for (final modelName in _models) {
       try {
-        final fallback = GenerativeModel(
-          model: _fallbackModel,
+        final model = GenerativeModel(
+          model: modelName,
           apiKey: apiKey.trim(),
         );
-        final response = await fallback.generateContent([
+        final response = await model.generateContent([
           Content.text('Hello'),
         ]);
-        return response.text != null;
+        if (response.text != null) return true;
       } catch (_) {
-        return false;
+        continue;
       }
     }
+    return false;
   }
 
   static Future<ClothingTagResult?> analyzeClothingImage({
@@ -77,28 +74,27 @@ class AiService {
       throw Exception('API Key not found. Please set your Gemini API key.');
     }
 
-    try {
-      return await _callGeminiVision(
-        apiKey: apiKey.trim(),
-        modelName: _primaryModel,
-        imageFile: imageFile,
-        existingCategories: existingCategories,
-      );
-    } catch (e) {
-      debugPrint('Primary model $_primaryModel failed ($e). Trying fallback $_fallbackModel...');
+    dynamic lastError;
+
+    // Try models in sequence until one succeeds
+    for (final modelName in _models) {
       try {
+        debugPrint('Analyzing clothing image using model: $modelName...');
         return await _callGeminiVision(
           apiKey: apiKey.trim(),
-          modelName: _fallbackModel,
+          modelName: modelName,
           imageFile: imageFile,
           existingCategories: existingCategories,
         );
-      } catch (fallbackError) {
-        debugPrint('Fallback model failed: $fallbackError');
-        rethrow;
+      } catch (e) {
+        lastError = e;
+        debugPrint('Model $modelName failed ($e). Trying next available model...');
       }
     }
+
+    throw Exception('All AI models are currently busy or unavailable. Please try again in a moment. ($lastError)');
   }
+
 
   static Future<ClothingTagResult?> _callGeminiVision({
     required String apiKey,
