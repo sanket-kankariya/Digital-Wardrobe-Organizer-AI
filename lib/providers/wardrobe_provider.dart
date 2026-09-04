@@ -87,3 +87,20 @@ class CategoryItemsNotifier extends StateNotifier<List<ClothingItemModel>> {
 final allItemsProvider = Provider<List<ClothingItemModel>>((ref) {
   return DatabaseService.getAllItems();
 });
+
+// Bulk-add progress tracking
+final bulkAddProgressProvider = StateProvider<BulkAddProgress?>((ref) => null);
+
+class BulkAddProgress {
+  final int processed;
+  final int total;
+  final String? currentItemName;
+
+  const BulkAddProgress({
+    required this.processed,
+    required this.total,
+    this.currentItemName,
+  });
+
+  double get fraction => total == 0 ? 0 : processed / total;
+}

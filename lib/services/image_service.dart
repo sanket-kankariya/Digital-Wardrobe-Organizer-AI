@@ -38,6 +38,17 @@ class ImageService {
     return File(xFile.path);
   }
 
+  /// Pick multiple images from gallery for bulk add
+  static Future<List<File>> pickMultipleFromGallery({int maxImages = 20}) async {
+    final xFiles = await _picker.pickMultiImage(
+      imageQuality: 70,
+      maxWidth: 512,
+      maxHeight: 512,
+      limit: maxImages,
+    );
+    return xFiles.map((xf) => File(xf.path)).toList();
+  }
+
 
 
   /// Remove background using Google ML Kit Subject Segmentation on-device.

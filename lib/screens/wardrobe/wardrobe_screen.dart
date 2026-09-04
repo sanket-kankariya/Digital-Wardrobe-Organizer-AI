@@ -7,6 +7,7 @@ import '../../models/clothing_item_model.dart';
 import '../../theme/app_theme.dart';
 import 'item_overview_screen.dart';
 import '../add_item/add_item_screen.dart';
+import '../add_item/bulk_add_screen.dart';
 
 class WardrobeScreen extends ConsumerWidget {
   const WardrobeScreen({super.key});
@@ -38,12 +39,71 @@ class WardrobeScreen extends ConsumerWidget {
               },
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const AddItemScreen()),
-        ).then((_) => ref.read(wardrobeCategoriesProvider.notifier).refresh()),
+        onPressed: () => _showAddOptions(context, ref),
+        tooltip: 'Add Clothing Items',
         child: const Icon(Icons.add),
-        tooltip: 'Add Clothing Item',
+      ),
+    );
+  }
+
+  void _showAddOptions(BuildContext context, WidgetRef ref) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Add to Wardrobe',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: AppTheme.primaryBlue,
+                child: Icon(Icons.checkroom, color: Colors.white, size: 20),
+              ),
+              title: const Text('Add Single Item'),
+              subtitle: const Text('Add one clothing item'),
+              onTap: () {
+                Navigator.pop(ctx);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AddItemScreen()),
+                ).then((_) => ref.read(wardrobeCategoriesProvider.notifier).refresh());
+              },
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: AppTheme.primaryBlue.withOpacity(0.15),
+                child: const Icon(Icons.photo_library, color: AppTheme.primaryBlue, size: 20),
+              ),
+              title: const Text('Bulk Add'),
+              subtitle: const Text('Add multiple items at once'),
+              onTap: () {
+                Navigator.pop(ctx);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const BulkAddScreen()),
+                ).then((_) => ref.read(wardrobeCategoriesProvider.notifier).refresh());
+              },
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
       ),
     );
   }

@@ -109,6 +109,15 @@ class DatabaseService {
     await _itemsBoxRef.delete(id);
   }
 
+  static Future<List<String>> addItems(List<ClothingItemModel> items) async {
+    final map = <String, ClothingItemModel>{};
+    for (final item in items) {
+      map[item.id] = item;
+    }
+    await _itemsBoxRef.putAll(map);
+    return items.map((i) => i.id).toList();
+  }
+
   // -- Outfits ------------------------------------------------------
   static Box<OutfitModel> get _outfitsBoxRef => Hive.box<OutfitModel>(_outfitsBox);
 
