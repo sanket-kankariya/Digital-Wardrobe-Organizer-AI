@@ -254,7 +254,10 @@ class _ItemThumb extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: file.existsSync()
-          ? Image.file(file, fit: BoxFit.cover)
+          ? Padding(
+              padding: const EdgeInsets.all(4),
+              child: Image.file(file, fit: BoxFit.contain),
+            )
           : Icon(Icons.checkroom, color: catColor, size: 36),
     );
   }

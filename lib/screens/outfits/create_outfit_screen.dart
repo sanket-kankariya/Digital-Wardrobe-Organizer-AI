@@ -254,9 +254,12 @@ class _CreateOutfitScreenState extends ConsumerState<CreateOutfitScreen> {
                                       top: Radius.circular(12),
                                     ),
                                     child: File(item.imagePath).existsSync()
-                                        ? Image.file(
-                                            File(item.imagePath),
-                                            fit: BoxFit.cover,
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(4),
+                                            child: Image.file(
+                                              File(item.imagePath),
+                                              fit: BoxFit.contain,
+                                            ),
                                           )
                                         : Container(
                                             color: Colors.grey[200],
@@ -401,9 +404,12 @@ class _CreateOutfitScreenState extends ConsumerState<CreateOutfitScreen> {
                                         top: Radius.circular(10),
                                       ),
                                       child: File(item.imagePath).existsSync()
-                                          ? Image.file(
-                                              File(item.imagePath),
-                                              fit: BoxFit.cover,
+                                          ? Padding(
+                                              padding: const EdgeInsets.all(4),
+                                              child: Image.file(
+                                                File(item.imagePath),
+                                                fit: BoxFit.contain,
+                                              ),
                                             )
                                           : Container(
                                               color: Colors.grey[200],
