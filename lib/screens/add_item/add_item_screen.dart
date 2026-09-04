@@ -48,6 +48,14 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
         : await ImageService.pickFromGallery();
     if (file == null) return;
     setState(() => _isProcessing = true);
+
+    // Concurrently trigger AI analysis in the background while processing image
+    AiService.hasApiKey().then((hasKey) {
+      if (hasKey && mounted) {
+        _triggerAiAnalysis(targetFile: file, silent: true);
+      }
+    });
+
     try {
       final processed = await ImageService.removeBackground(file);
       setState(() {
@@ -62,6 +70,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
       });
     }
   }
+
 
   Future<void> _saveItem() async {
     if (!_formKey.currentState!.validate()) return;
@@ -153,7 +162,15 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                               child: _imageFile != null
                                   ? ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
-                                      child: Image.file(_imageFile!, fit: BoxFit.contain),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Image.file(
+                                          _imageFile!,
+                                          fit: BoxFit.contain,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        ),
+                                      ),
                                     )
                                   : Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -380,11 +397,13 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
     return 'Custom';
   }
 
-  Future<void> _triggerAiAnalysis() async {
-    if (_imageFile == null) return;
+  Future<void> _triggerAiAnalysis({File? targetFile, bool silent = false}) async {
+    final fileToAnalyze = targetFile ?? _imageFile;
+    if (fileToAnalyze == null) return;
 
     final hasKey = await AiService.hasApiKey();
     if (!hasKey) {
+      if (silent) return;
       if (!mounted) return;
       final setupSuccess = await _showApiKeySetupSheet(context);
       if (setupSuccess != true) return;
@@ -396,7 +415,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
       final categoryNames = categories.map((c) => c.name).toList();
 
       final result = await AiService.analyzeClothingImage(
-        imageFile: _imageFile!,
+        imageFile: fileToAnalyze,
         existingCategories: categoryNames,
       );
 
@@ -425,22 +444,24 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
           }
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.auto_awesome, color: Colors.white, size: 18),
-                SizedBox(width: 8),
-                Expanded(child: Text('AI auto-filled the clothing details!')),
-              ],
+        if (!silent && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Row(
+                children: [
+                  Icon(Icons.auto_awesome, color: Colors.white, size: 18),
+                  SizedBox(width: 8),
+                  Expanded(child: Text('AI auto-filled the clothing details!')),
+                ],
+              ),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
             ),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
-          ),
-        );
+          );
+        }
       }
     } catch (e) {
-      if (mounted) {
+      if (!silent && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('AI Analysis failed: $e'),
@@ -455,6 +476,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
       }
     }
   }
+
 
   Future<bool?> _showApiKeySetupSheet(BuildContext context) {
     final keyCtrl = TextEditingController();

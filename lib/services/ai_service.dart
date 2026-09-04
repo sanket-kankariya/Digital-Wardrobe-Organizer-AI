@@ -107,32 +107,28 @@ class AiService {
       apiKey: apiKey,
       generationConfig: GenerationConfig(
         responseMimeType: 'application/json',
+        maxOutputTokens: 250,
+        temperature: 0.2,
       ),
     );
 
     final imageBytes = await imageFile.readAsBytes();
     final imagePart = DataPart('image/jpeg', imageBytes);
 
-    final categoriesContext = existingCategories.isNotEmpty
-        ? 'Choose the most suitable category from this exact list if applicable: ${existingCategories.join(", ")}.'
-        : 'Suggest a standard wardrobe category (e.g. Tops, Shirts, T-Shirts, Bottoms, Pants, Jeans, Outerwear, Dresses, Shoes, Accessories).';
+    final catHint = existingCategories.isNotEmpty
+        ? 'Categories: ${existingCategories.join(", ")}.'
+        : 'Categories: Tops, Bottoms, Outerwear, Shoes, Accessories, Dresses.';
 
     final prompt = TextPart('''
-Analyze this clothing or fashion item image.
-$categoriesContext
-
-Respond ONLY with a valid JSON object strictly matching this schema:
-{
-  "name": "concise descriptive title of the clothing item (e.g. Navy Blue Oxford Button-Down Shirt, White Crewneck T-Shirt)",
-  "brand": "brand name if clearly visible or recognizable on label/logo, otherwise null",
-  "dominantColorHex": "#RRGGBB (hex code of the primary/dominant color of the fabric, e.g. #2874F0)",
-  "category": "suggested category name"
-}
+Identify clothing. Return JSON:
+$catHint
+{"name":"Item name (short)","brand":"Brand or null","dominantColorHex":"#RRGGBB","category":"Matched category"}
 ''');
 
     final response = await model.generateContent([
       Content.multi([prompt, imagePart]),
     ]);
+
 
     final rawText = response.text;
     if (rawText == null || rawText.trim().isEmpty) return null;
