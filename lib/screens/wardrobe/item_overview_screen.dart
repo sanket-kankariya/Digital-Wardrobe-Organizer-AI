@@ -364,15 +364,16 @@ class _ItemOverviewScreenState extends ConsumerState<ItemOverviewScreen> {
                         : Icon(Icons.checkroom, color: catColor, size: 36),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                  child: Text(
-                    item.name,
-                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                if (item.name.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    child: Text(
+                      item.name,
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
                 if (item.brand.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(left: 6, right: 6, bottom: 4),

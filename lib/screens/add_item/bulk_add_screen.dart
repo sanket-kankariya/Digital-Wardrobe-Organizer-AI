@@ -401,7 +401,7 @@ class _BulkAddScreenState extends ConsumerState<BulkAddScreen> {
     final uncategorisedId = DatabaseService.getOrCreateUncategorisedId();
     for (int i = 0; i < activeItems.length; i++) {
       if (activeItems[i].name.trim().isEmpty) {
-        activeItems[i].name = 'Clothing Item ${i + 1}';
+        activeItems[i].name = '';
       }
       if (activeItems[i].categoryId == null) {
         activeItems[i].categoryId = uncategorisedId;

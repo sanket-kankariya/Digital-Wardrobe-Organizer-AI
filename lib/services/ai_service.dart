@@ -134,7 +134,7 @@ $catHint
     if (rawText == null || rawText.trim().isEmpty) return null;
 
     final parsed = jsonDecode(rawText) as Map<String, dynamic>;
-    final name = parsed['name'] as String? ?? 'Clothing Item';
+    final name = parsed['name'] as String? ?? '';
     final brand = parsed['brand'] as String?;
     final colorHex = parsed['dominantColorHex'] as String?;
     final category = parsed['category'] as String?;
