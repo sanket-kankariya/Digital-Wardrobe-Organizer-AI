@@ -113,7 +113,8 @@ class AiService {
     );
 
     final imageBytes = await imageFile.readAsBytes();
-    final imagePart = DataPart('image/jpeg', imageBytes);
+    final mimeType = imageFile.path.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
+    final imagePart = DataPart(mimeType, imageBytes);
 
     final catHint = existingCategories.isNotEmpty
         ? 'Categories: ${existingCategories.join(", ")}.'

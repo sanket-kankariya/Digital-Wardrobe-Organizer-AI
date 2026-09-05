@@ -316,7 +316,11 @@ class _ItemThumb extends StatelessWidget {
       child: file.existsSync()
           ? Padding(
               padding: const EdgeInsets.all(4),
-              child: Image.file(file, fit: BoxFit.contain),
+              child: Image.file(
+                file,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.medium,
+              ),
             )
           : Icon(Icons.checkroom, color: catColor, size: 36),
     );

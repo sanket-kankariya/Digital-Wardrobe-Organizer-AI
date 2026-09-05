@@ -101,6 +101,7 @@ class BulkItemCard extends StatelessWidget {
                     Image.file(
                       item.displayImage,
                       fit: BoxFit.contain,
+                      filterQuality: FilterQuality.medium,
                     ),
                     if (item.isProcessingBg)
                       Container(

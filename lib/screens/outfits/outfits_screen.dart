@@ -280,7 +280,7 @@ class _OutfitThumb extends ConsumerWidget {
           children: [
             Expanded(
               child: outfitItems.isNotEmpty && File(outfitItems.first.imagePath).existsSync()
-                  ? Image.file(File(outfitItems.first.imagePath), fit: BoxFit.cover, width: double.infinity)
+                  ? Image.file(File(outfitItems.first.imagePath), fit: BoxFit.cover, width: double.infinity, filterQuality: FilterQuality.medium)
                   : Icon(Icons.style, color: catColor, size: 30),
             ),
             Container(
@@ -388,7 +388,7 @@ class _OutfitThumb extends ConsumerWidget {
                                 child: ClipRRect(
                                   borderRadius: const BorderRadius.vertical(top: Radius.circular(11)),
                                   child: File(item.imagePath).existsSync()
-                                      ? Image.file(File(item.imagePath), fit: BoxFit.cover)
+                                      ? Image.file(File(item.imagePath), fit: BoxFit.cover, filterQuality: FilterQuality.medium)
                                       : Container(color: Colors.grey[200]),
                                 ),
                               ),

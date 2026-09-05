@@ -632,6 +632,7 @@ class _BulkAddScreenState extends ConsumerState<BulkAddScreen> {
                     child: Image.file(
                       item.displayImage,
                       fit: BoxFit.cover,
+                      filterQuality: FilterQuality.medium,
                     ),
                   ),
                   if (item.isProcessingBg)

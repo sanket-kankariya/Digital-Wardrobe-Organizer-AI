@@ -259,6 +259,7 @@ class _CreateOutfitScreenState extends ConsumerState<CreateOutfitScreen> {
                                             child: Image.file(
                                               File(item.imagePath),
                                               fit: BoxFit.contain,
+                                              filterQuality: FilterQuality.medium,
                                             ),
                                           )
                                         : Container(
@@ -409,6 +410,7 @@ class _CreateOutfitScreenState extends ConsumerState<CreateOutfitScreen> {
                                               child: Image.file(
                                                 File(item.imagePath),
                                                 fit: BoxFit.contain,
+                                                filterQuality: FilterQuality.medium,
                                               ),
                                             )
                                           : Container(

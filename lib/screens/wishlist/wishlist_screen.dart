@@ -92,7 +92,7 @@ class _WishCard extends ConsumerWidget {
                   Container(
                     color: Color(item.colorValue).withOpacity(0.1),
                     child: file.existsSync()
-                        ? Image.file(file, fit: BoxFit.cover, width: double.infinity)
+                        ? Image.file(file, fit: BoxFit.cover, width: double.infinity, filterQuality: FilterQuality.medium)
                         : const Icon(Icons.favorite, color: Colors.pink, size: 48),
                   ),
                   Positioned(
@@ -294,7 +294,7 @@ class _AddWishlistItemScreenState extends ConsumerState<_AddWishlistItemScreen> 
                             border: Border.all(color: Colors.pink.withOpacity(0.3)),
                           ),
                           child: _imageFile != null
-                              ? ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(_imageFile!, fit: BoxFit.contain))
+                              ? ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(_imageFile!, fit: BoxFit.contain, filterQuality: FilterQuality.medium))
                               : const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [

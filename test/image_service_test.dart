@@ -53,4 +53,21 @@ void main() {
     expect(cropped.width, equals(30));
     expect(cropped.height, equals(30));
   });
+
+  test('High resolution image trimming test (2048x2048)', () {
+    final sw = Stopwatch()..start();
+    final testImage = img.Image(width: 2560, height: 2560, numChannels: 4);
+    // Put a rectangle in the center
+    for (int y = 500; y < 2000; y++) {
+      for (int x = 500; x < 2000; x++) {
+        testImage.setPixel(x, y, img.ColorRgba8(100, 150, 200, 255));
+      }
+    }
+    final trimmed = img.trim(testImage, mode: img.TrimMode.transparent);
+    expect(trimmed.width, equals(1500));
+    expect(trimmed.height, equals(1500));
+    final encoded = img.encodePng(trimmed);
+    expect(encoded.isNotEmpty, isTrue);
+    sw.stop();
+  });
 }

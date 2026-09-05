@@ -14,36 +14,36 @@ class ImageService {
   static final _picker = ImagePicker();
   static const _uuid = Uuid();
 
-  /// Pick image from camera
+  /// Pick image from camera with high/original quality (up to 2560px, 100% quality)
   static Future<File?> pickFromCamera() async {
     final xFile = await _picker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 70,
-      maxWidth: 512,
-      maxHeight: 512,
+      imageQuality: 100,
+      maxWidth: 2560,
+      maxHeight: 2560,
     );
     if (xFile == null) return null;
     return File(xFile.path);
   }
 
-  /// Pick image from gallery
+  /// Pick image from gallery with high/original quality (up to 2560px, 100% quality)
   static Future<File?> pickFromGallery() async {
     final xFile = await _picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 70,
-      maxWidth: 512,
-      maxHeight: 512,
+      imageQuality: 100,
+      maxWidth: 2560,
+      maxHeight: 2560,
     );
     if (xFile == null) return null;
     return File(xFile.path);
   }
 
-  /// Pick multiple images from gallery for bulk add
+  /// Pick multiple images from gallery for bulk add with high quality (up to 2560px, 100% quality)
   static Future<List<File>> pickMultipleFromGallery({int maxImages = 20}) async {
     final xFiles = await _picker.pickMultiImage(
-      imageQuality: 70,
-      maxWidth: 512,
-      maxHeight: 512,
+      imageQuality: 100,
+      maxWidth: 2560,
+      maxHeight: 2560,
       limit: maxImages,
     );
     return xFiles.map((xf) => File(xf.path)).toList();
@@ -108,7 +108,11 @@ class ImageService {
   /// Save a file permanently into app documents
   static Future<File> saveImagePermanently(File file) async {
     final dir = await getApplicationDocumentsDirectory();
-    final name = 'wardrobe_${_uuid.v4()}.png';
+    if (file.parent.path == dir.path && file.path.contains('wardrobe_')) {
+      return file;
+    }
+    final ext = file.path.toLowerCase().endsWith('.png') ? 'png' : 'jpg';
+    final name = 'wardrobe_${_uuid.v4()}.$ext';
     final savedFile = await file.copy('${dir.path}/$name');
     return savedFile;
   }

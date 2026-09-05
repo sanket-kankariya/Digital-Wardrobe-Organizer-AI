@@ -167,6 +167,7 @@ class _AddItemScreenState extends ConsumerState<AddItemScreen> {
                                         child: Image.file(
                                           _imageFile!,
                                           fit: BoxFit.contain,
+                                          filterQuality: FilterQuality.medium,
                                           width: double.infinity,
                                           height: double.infinity,
                                         ),
