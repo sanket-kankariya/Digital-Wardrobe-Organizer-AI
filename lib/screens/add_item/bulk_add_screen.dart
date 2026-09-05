@@ -397,29 +397,14 @@ class _BulkAddScreenState extends ConsumerState<BulkAddScreen> {
       return;
     }
 
-    // Validate
+    // Auto-assign defaults for missing name/category
+    final uncategorisedId = DatabaseService.getOrCreateUncategorisedId();
     for (int i = 0; i < activeItems.length; i++) {
       if (activeItems[i].name.trim().isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Item ${i + 1} needs a name'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-        final realIndex = _items.indexOf(activeItems[i]);
-        _goToPage(realIndex);
-        return;
+        activeItems[i].name = 'Clothing Item ${i + 1}';
       }
       if (activeItems[i].categoryId == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Item ${i + 1} "${activeItems[i].name}" needs a category'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-        final realIndex = _items.indexOf(activeItems[i]);
-        _goToPage(realIndex);
-        return;
+        activeItems[i].categoryId = uncategorisedId;
       }
     }
 

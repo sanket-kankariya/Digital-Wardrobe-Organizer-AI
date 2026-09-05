@@ -38,6 +38,7 @@ class DatabaseService {
         CategoryModel(id: _uuid.v4(), name: 'Activewear', type: 'wardrobe', colorValue: 0xFF00897B),
         CategoryModel(id: _uuid.v4(), name: 'Shoes', type: 'wardrobe', colorValue: 0xFF6A1B9A),
         CategoryModel(id: _uuid.v4(), name: 'Accessories', type: 'wardrobe', colorValue: 0xFFAD1457),
+        CategoryModel(id: _uuid.v4(), name: 'Uncategorised', type: 'wardrobe', colorValue: 0xFF9E9E9E),
         CategoryModel(id: _uuid.v4(), name: 'Work', type: 'outfit', colorValue: 0xFF1565C0),
         CategoryModel(id: _uuid.v4(), name: 'Formal', type: 'outfit', colorValue: 0xFF4A148C),
         CategoryModel(id: _uuid.v4(), name: 'Casual', type: 'outfit', colorValue: 0xFF2874F0),
@@ -48,6 +49,24 @@ class DatabaseService {
         box.put(cat.id, cat);
       }
     }
+  }
+
+  /// Returns the ID of the "Uncategorised" wardrobe category, creating it if it doesn't exist.
+  static String getOrCreateUncategorisedId() {
+    final box = Hive.box<CategoryModel>(_categoriesBox);
+    final existing = box.values.where(
+      (c) => c.type == 'wardrobe' && c.name.toLowerCase() == 'uncategorised',
+    );
+    if (existing.isNotEmpty) return existing.first.id;
+
+    final cat = CategoryModel(
+      id: _uuid.v4(),
+      name: 'Uncategorised',
+      type: 'wardrobe',
+      colorValue: 0xFF9E9E9E,
+    );
+    box.put(cat.id, cat);
+    return cat.id;
   }
 
   // -- Categories --------------------------------------------------

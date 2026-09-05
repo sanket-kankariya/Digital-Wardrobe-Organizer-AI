@@ -148,7 +148,7 @@ class BulkItemCard extends StatelessWidget {
                     TextFormField(
                       initialValue: item.name,
                       decoration: InputDecoration(
-                        labelText: 'Item Name *',
+                        labelText: 'Item Name',
                         suffixIcon: aiLoadingSuffix,
                         border: const OutlineInputBorder(),
                       ),
@@ -168,7 +168,7 @@ class BulkItemCard extends StatelessWidget {
                     DropdownButtonFormField<String>(
                       initialValue: item.categoryId,
                       decoration: InputDecoration(
-                        labelText: 'Category *',
+                        labelText: 'Category',
                         border: const OutlineInputBorder(),
                         suffixIcon: item.isAnalyzingAi
                             ? const Padding(
